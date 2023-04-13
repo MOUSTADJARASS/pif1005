@@ -11,7 +11,7 @@ public class Main {
         System.out.println("\t\t\t veuiller faire votre choix :\n");
         System.out.println("1 - pour cree un graphe.\n");
         System.out.println("2 - pour afficher les caracteristique du graphe.\n");
-        System.out.println("");
+        System.out.println("3 - pour voir les testes\n");
     }
 
     private static int Valide(int a, int b) {
@@ -29,7 +29,7 @@ public class Main {
         boolean boucle= true;
         while (boucle!= false) {
         Options();
-        int choix = Valide(1, 2);
+        int choix = Valide(1, 3);
             switch (choix) {
                 case 1:
 
@@ -44,6 +44,10 @@ public class Main {
                         Menu();
                     }
                     break;
+                case 3:
+                    test();
+                    break;
+
             }
         }
     }
@@ -85,20 +89,25 @@ public class Main {
                 }
                 newGraphe.afficher();
             } else {
-                matriceAdjacence(nombre);
-                matriceIncidence(newGraphe.getCouple());
-                break;
-            }
+                matriceAdjacence(nombre,newGraphe);
+                System.out.println("\n la complexité temporelle de ce programme est de O(N^2),\n et la complexité spatiale est de O(N^2).\n où N est le nombre de sommets dans le graphe\n Le nombre d'opérations effectuées est de l'ordre de O(N^2).\n");
+
+                matriceIncidence(newGraphe.getCouple(),newGraphe);
+                System.out.println(" \n et la complexité spatiale est quadratique O(AxN)\n où N est le nombre de sommets dans le graphe et A est le nombre d'arêtes\n Le nombre d'opérations effectuées est de l'ordre de O(A).\n");
+
+                break;}
+        }
     }
-    private static void matriceAdjacence (int a){
+    private static void matriceAdjacence(int a,Graphe graphe){
         Adjacence = new int[a][a];
-            System.out.println("\t\t\t"+ "Matrice d'adjacencen\n");
+            System.out.println("\t\t\t"+ "Matrice d'adjacencence" +
+                    "\n");
                for (int i =0;i< a;i++) {
                    System.out.print("\t\t" + ((i + 1)));
                }
         for(int i =0;i < a;i++) {
             for (int j = 0; j < a; j++) {
-                if (newGraphe.getGraphe().get(i).contains(j)) {
+                if (graphe.getGraphe().get(i).contains(j)) {
                     Adjacence[i][j] = 1;
                     Adjacence[j][i] = 1;
                 }
@@ -110,38 +119,36 @@ public class Main {
                 System.out.print("\t\t" + Adjacence[i][j]);
             }
         }
-                System.out.println("\n la complexité temporelle de ce programme est de O(N^2),\n et la complexité spatiale est de O(N^2).\n où N est le nombre de sommets dans le graphe\n Le nombre d'opérations effectuées est de l'ordre de O(N^2).\n");
     }
 
-    private static void matriceIncidence(ArrayList<ArrayList<Integer>> adj)
+    private static void matriceIncidence(ArrayList<ArrayList<Integer>> adj,Graphe graphe)
         {
             int a =0;
             int b =0;
-            int vertices = newGraphe.getSommet(), edges = 0;
-        int[][] Incidence = new int[newGraphe.getSommet()][newGraphe.getCouple().size()];
+            int vertices = graphe.getSommet(), edges = 0;
+        int[][] Incidence = new int[graphe.getSommet()][graphe.getCouple().size()];
             System.out.println();
-                System.out.println("\nMatrice d'Incidence");
-                for (int i=0;i<newGraphe.getCouple().size() ;i++ ){
-                    a = newGraphe.getCouple().get(i).get(0);
-                    b = newGraphe.getCouple().get(i).get(1);
+                System.out.println("\n\t\t\t Matrice d'Incidence");
+                for (int i=0;i<graphe.getCouple().size() ;i++ ){
+                    a = graphe.getCouple().get(i).get(0);
+                    b = graphe.getCouple().get(i).get(1);
                 System.out.print("\t\t"+((a+1)+","+(b+1)));
                     Incidence[a][i]= 1;
                     Incidence[b][i]= 1;
             }
 
-            for (int i = 0; i < newGraphe.getSommet(); i++) {
+            for (int i = 0; i < graphe.getSommet(); i++) {
                 System.out.print("\n" + (i + 1));
-                for (int j = 0; j < newGraphe.getCouple().size(); j++) {
+                for (int j = 0; j < graphe.getCouple().size(); j++) {
                     System.out.print("\t\t" + Incidence[i][j]);
                 }
             }
-                    System.out.println(" \n et la complexité spatiale est quadratique O(AxN)\n où N est le nombre de sommets dans le graphe et A est le nombre d'arêtes\n Le nombre d'opérations effectuées est de l'ordre de O(A).\n");
     }
 private static void carac(){
                 System.out.println("le graphe entrée possede "+newGraphe.getSommet()+" sommets, et "+newGraphe.getArc()+" arcs." );
     cycleEulerien();
     chaineEulerien();
-    if(isPlanar(Adjacence) == true){
+    if(planaire(Adjacence) == true){
                 System.out.println("ce graphe est plannaire ");
     }else {
                 System.out.println("ce graphe n'est pas plannaire ");
@@ -182,10 +189,11 @@ private static void chaineEulerien() {
             System.out.println("ce graphe ne contient pas de chaine Eulerienne ");
         }
 }
-    public static boolean isPlanar(int[][] adjacencyMatrix) {
-        int n = adjacencyMatrix.length;
+    public static boolean planaire(int[][] matriceAdjacence) {
+        int n = matriceAdjacence.length;
 
         // Cas particuliers
+
         if (n <= 4) {
             return true;
         }
@@ -193,12 +201,12 @@ private static void chaineEulerien() {
             return false;
         }
 
-        // Algorithme de Kuratowski
+
         for (int i = 0; i < n; i++) {
             for (int j = i+1; j < n; j++) {
-                if (adjacencyMatrix[i][j] == 1) {
+                if (matriceAdjacence[i][j] == 1) {
                     for (int k = 0; k < n; k++) {
-                        if (k != i && k != j && adjacencyMatrix[i][k] == 1 && adjacencyMatrix[k][j] == 1) {
+                        if (k != i && k != j && matriceAdjacence[i][k] == 1 && matriceAdjacence[k][j] == 1) {
                             return false; // Contient une sous-division de K5 ou K3,3
                         }
                     }
@@ -207,6 +215,46 @@ private static void chaineEulerien() {
         }
 
         return true;
+    }
+    public static void test(){
+        Graphe Graphe1 = new Graphe(6);
+        Graphe Graphe2 = new Graphe(5);
+        Graphe Graphe3 = new Graphe(4);
+        Graphe1.ajouterArc(0,1);
+        Graphe1.ajouterArc(1,2);
+        Graphe1.ajouterArc(2,3);
+        Graphe1.ajouterArc(3,4);
+        Graphe1.ajouterArc(4,5);
+        Graphe1.ajouterArc(5,1);
+
+        Graphe2.ajouterArc(0,1);
+        Graphe2.ajouterArc(1,2);
+        Graphe2.ajouterArc(2,3);
+        Graphe2.ajouterArc(3,1);
+        Graphe2.ajouterArc(0,4);
+
+        Graphe3.ajouterArc(0,1);
+        Graphe3.ajouterArc(1,2);
+        Graphe3.ajouterArc(1,3);
+
+
+        System.out.println("\ngraphe 1");
+        Graphe1.afficher();
+        System.out.println();
+        matriceAdjacence(6,Graphe1);
+        matriceIncidence(Graphe1.getCouple(),Graphe1);
+
+        System.out.println("\ngraphe 2");
+        Graphe2.afficher();
+        System.out.println();
+        matriceAdjacence(5,Graphe2);
+        matriceIncidence(Graphe2.getCouple(),Graphe2);
+
+        System.out.println("\ngraphe 3");
+        Graphe3.afficher();
+        System.out.println();
+        matriceAdjacence(4,Graphe3);
+        matriceIncidence(Graphe3.getCouple(),Graphe3);
     }
 }
 
